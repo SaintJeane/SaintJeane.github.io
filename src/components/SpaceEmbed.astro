@@ -1,0 +1,173 @@
+---
+// src/components/SpaceEmbed.astro
+// ─── HuggingFace Space embed component ─────────────────────────────────────
+//
+// Supports two embed strategies:
+//
+//  type="iframe"  (DEFAULT — works for all Space types)
+//  ─────────────────────────────────────────────────────
+//  Standard <iframe> embed. Compatible with Gradio, Streamlit, and Static
+//  Spaces. Requires an explicit `height` prop. Use this when in doubt.
+//
+//  type="gradio"  (Gradio Spaces only — faster, auto-sizes)
+//  ─────────────────────────────────────────────────────────
+//  Uses the official Gradio <gradio-app> Web Component.
+//  - Auto-adjusts height to match the Space's content.
+//  - Faster initial paint than iframe.
+//  - Only works for Gradio Spaces.
+//  - Requires `gradioVersion` to match your Space's Gradio version.
+//    Find it in: Space → Files → requirements.txt
+//
+// Usage examples:
+//   <!-- Streamlit Space (always use iframe) -->
+//   <SpaceEmbed
+//     spaceUrl="https://user-space.hf.space"
+//     type="iframe"
+//     title="Retail Optimizer"
+//   />
+//
+//   <!-- Gradio Space (can use WebComponent) -->
+//   <SpaceEmbed
+//     spaceUrl="https://user-rag.hf.space"
+//     type="gradio"
+//     title="Agentic RAG"
+//     gradioVersion="6.19.0"
+//   />
+
+interface Props {
+  spaceUrl:       string;              // Full HuggingFace Space URL
+  type?:          'iframe' | 'gradio'; // Embed method (default: 'iframe')
+  title:          string;              // Accessibility label for the embed
+  height?:        string;              // iframe height (default '750px'; ignored for type="gradio")
+  gradioVersion?: string;              // Gradio version to load (only for type="gradio")
+}
+
+const {
+  spaceUrl,
+  type          = 'iframe',
+  title,
+  height        = '750px',
+  gradioVersion = '4.44.1',           // Safe fallback; update to match your Space
+} = Astro.props;
+---
+
+<div class="embed-shell">
+
+  <!-- ── Info bar above the embed ── -->
+  <div class="embed-bar">
+    <span class="embed-title">{title}</span>
+    <a
+      href={spaceUrl}
+      class="embed-external"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Open ${title} in HuggingFace`}
+    >
+      Open in HuggingFace ↗
+    </a>
+  </div>
+
+  <!-- ── Embed body ── -->
+  <div class="embed-body">
+
+    {type === 'gradio' ? (
+      <>
+        <!--
+          Gradio WebComponent embed.
+          The <script> below dynamically appends the Gradio JS module to <head>
+          using define:vars to safely pass the server-side version string.
+          We check for an existing script tag to avoid loading it twice if
+          multiple SpaceEmbed components appear on the same page.
+        -->
+        <script define:vars={{ gradioVersion }}>
+          const src = `https://gradio.s3-us-west-2.amazonaws.com/${gradioVersion}/gradio.js`;
+          if (!document.querySelector(`script[data-hf-gradio]`)) {
+            const s = document.createElement('script');
+            s.type = 'module';
+            s.src  = src;
+            s.dataset.hfGradio = '';     // marker so we only inject once
+            document.head.appendChild(s);
+          }
+        </script>
+
+        <!-- The actual Gradio Web Component — auto-sizes to Space content -->
+        <gradio-app src={spaceUrl} eager></gradio-app>
+      </>
+    ) : (
+      <iframe
+        src={spaceUrl}
+        width="100%"
+        height={height}
+        title={title}
+        loading="lazy"
+        frameborder="0"
+        allow="accelerometer; camera; encrypted-media; fullscreen; gyroscope; microphone; midi; clipboard-read; clipboard-write"
+        sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-downloads"
+      ></iframe>
+    )}
+
+  </div>
+</div>
+
+<style>
+  /* ── Outer shell with border + rounded corners ── */
+  .embed-shell {
+    width:         100%;
+    border:        1px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow:      hidden;
+    background:    var(--surface);
+  }
+
+  /* ── Top info bar ── */
+  .embed-bar {
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    padding:         0.6rem 1rem;
+    background:      var(--surface-2);
+    border-bottom:   1px solid var(--border);
+    gap:             1rem;
+  }
+
+  .embed-title {
+    font-family:    var(--font-mono);
+    font-size:      0.72rem;
+    color:          var(--text-muted);
+    letter-spacing: 0.03em;
+    white-space:    nowrap;
+    overflow:       hidden;
+    text-overflow:  ellipsis;
+  }
+
+  .embed-external {
+    font-family: var(--font-mono);
+    font-size:   0.68rem;
+    color:       var(--accent);
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition:  opacity var(--t);
+  }
+  .embed-external:hover { opacity: 0.7; }
+
+  /* ── Embed body ── */
+  .embed-body {
+    display:        flex;
+    flex-direction: column;
+    /* min-height gives the user something to see while the Space loads */
+    min-height:     400px;
+  }
+
+  .embed-body iframe {
+    display: block;
+    border:  none;
+    width:   100%;
+    flex:    1;
+  }
+
+  /* gradio-app is a custom element; give it full width */
+  .embed-body gradio-app {
+    display: block;
+    width:   100%;
+  }
+</style>

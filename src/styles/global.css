@@ -1,0 +1,269 @@
+/* ─── Design Tokens ─────────────────────────────────────────────────────────
+   All colors, fonts, spacing, and radii are defined here as CSS custom
+   properties so every component can reference them consistently.
+   To retheme the entire portfolio, only this section needs to change.
+   ────────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Background layers (darkest → lightest) */
+  --bg:        #0A0C12;   /* page canvas */
+  --surface:   #12141C;   /* card / panel background */
+  --surface-2: #1A1C27;   /* elevated / hovered surface */
+
+  /* Borders */
+  --border:    #21243A;   /* default border */
+  --border-2:  #2E3250;   /* stronger / hovered border */
+
+  /* Primary accent — soft indigo */
+  --accent:        #818CF8;
+  --accent-dark:   #4F46E5;
+  --accent-glow:   rgba(129, 140, 248, 0.12);
+  --accent-glow-2: rgba(129, 140, 248, 0.25);
+
+  /* Live / success state — emerald */
+  --live:    #10B981;
+  --live-bg: rgba(16, 185, 129, 0.10);
+
+  /* Text hierarchy */
+  --text:       #E2E8F0;   /* primary */
+  --text-2:     #94A3B8;   /* secondary / body */
+  --text-muted: #475569;   /* placeholder / meta */
+
+  /* Font stacks */
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Layout */
+  --container: 1100px;
+  --gap:       1.5rem;
+
+  /* Border radii */
+  --r:    10px;
+  --r-sm:  6px;
+  --r-lg: 16px;
+
+  /* Transition shorthand */
+  --t: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Box-Sizing Reset ───────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* Accessible keyboard focus ring — uses accent color */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ─── Typography Scale ───────────────────────────────────────────────────── */
+/* Display font (Space Grotesk) is used for all headings. */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+/* Fluid sizes: scale smoothly between viewport widths */
+h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); }
+h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); }
+h3 { font-size: clamp(1.2rem, 2.5vw, 1.45rem); }
+
+/* Body text defaults to secondary colour for readability on dark bg */
+p {
+  color: var(--text-2);
+  max-width: 65ch;
+}
+
+/* Inline code snippets */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--surface-2);
+  color: var(--accent);
+  padding: 0.15em 0.4em;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+}
+
+/* ─── Layout Utilities ───────────────────────────────────────────────────── */
+
+/* Centres content and caps max width */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gap);
+}
+
+/* Standard vertical section padding */
+.section {
+  padding-block: 6rem;
+}
+
+/* ─── Buttons ────────────────────────────────────────────────────────────── */
+/* Base styles shared by all button variants */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1.4rem;
+  border-radius: var(--r);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--t), border-color var(--t),
+              color var(--t), transform var(--t);
+  border: 1px solid transparent;
+  white-space: nowrap;
+  text-decoration: none;
+  user-select: none;
+}
+
+/* Filled accent button — primary call-to-action */
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.btn-primary:hover {
+  background: var(--accent-dark);
+  border-color: var(--accent-dark);
+  transform: translateY(-1px);
+}
+
+/* Outline / ghost button — secondary action */
+.btn-ghost {
+  background: transparent;
+  color: var(--text-2);
+  border-color: var(--border-2);
+}
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* Smaller button size used on project cards */
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+/* ─── Tags ───────────────────────────────────────────────────────────────── */
+/* Technology / library pill badges */
+.tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.2em 0.65em;
+  border-radius: 999px;
+  background: var(--accent-glow);
+  color: var(--accent);
+  border: 1px solid rgba(129, 140, 248, 0.18);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+/* ─── Live Demo Badge ────────────────────────────────────────────────────── */
+/* Green pulsing "Live Demo" badge for cards that have an active HF Space */
+.badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  padding: 0.22em 0.7em;
+  border-radius: 999px;
+  background: var(--live-bg);
+  color: var(--live);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* The pulsing dot inside the badge */
+.badge-live::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--live);
+  flex-shrink: 0;
+  animation: dot-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1;   transform: scale(1);    }
+  50%       { opacity: 0.4; transform: scale(0.8);  }
+}
+
+/* ─── Horizontal Rule ────────────────────────────────────────────────────── */
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin-block: 0;
+}
+
+/* ─── Custom Scrollbar (WebKit) ──────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 8px; }
+::-webkit-scrollbar-track  { background: var(--bg); }
+::-webkit-scrollbar-thumb  { background: var(--border-2); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ─── Reduced Motion ──────────────────────────────────────────────────────
+   Respects the user's OS preference to minimise animations.
+   This overrides all animation/transition durations to near-zero.         */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+}

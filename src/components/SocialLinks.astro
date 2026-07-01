@@ -1,0 +1,103 @@
+---
+// src/components/SocialLinks.astro
+// ─── Vibrant social profile badges ─────────────────────────────────────────
+//
+// Uses shields.io `style=for-the-badge` format — the large pill badges
+// you see on GitHub READMEs. Each badge is wrapped in an anchor tag.
+// Only renders badges for props that are provided (all are optional).
+//
+// Usage:
+//   <SocialLinks
+//     linkedin="https://linkedin.com/in/your-handle"
+//     github="https://github.com/saint-jeane"
+//     huggingface="https://huggingface.co/your-handle"
+//     kaggle="https://kaggle.com/your-handle"
+//     medium="https://medium.com/@your-handle"
+//     email="mailto:your@email.com"
+//   />
+
+interface Props {
+  github?:       string;
+  linkedin?:     string;
+  huggingface?:  string;
+  kaggle?:       string;
+  medium?:       string;
+  email?:        string;
+}
+
+const { github, linkedin, huggingface, kaggle, medium, email } = Astro.props;
+
+// ── Badge image URLs ─────────────────────────────────────────────────────────
+// shields.io URL format:
+//   https://img.shields.io/badge/{label}-{hex_color}?style=for-the-badge&logo={simple-icon-slug}&logoColor={color}
+//
+// Simple Icons slugs: https://simpleicons.org
+// Brand hex colors sourced from each platform's press kit.
+const B = {
+  linkedin:    'https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white',
+  github:      'https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white',
+  huggingface: 'https://img.shields.io/badge/HuggingFace-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black',
+  kaggle:      'https://img.shields.io/badge/Kaggle-20BEFF?style=for-the-badge&logo=kaggle&logoColor=white',
+  medium:      'https://img.shields.io/badge/Medium-12100E?style=for-the-badge&logo=medium&logoColor=white',
+  email:       'https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white',
+};
+---
+
+<div class="social-badges" aria-label="Social and contact links">
+  {linkedin    && (
+    <a href={linkedin}    target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">
+      <img src={B.linkedin}    alt="LinkedIn"    height="30" loading="lazy" decoding="async" />
+    </a>
+  )}
+  {github      && (
+    <a href={github}      target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">
+      <img src={B.github}      alt="GitHub"      height="30" loading="lazy" decoding="async" />
+    </a>
+  )}
+  {huggingface && (
+    <a href={huggingface} target="_blank" rel="noopener noreferrer" aria-label="HuggingFace profile">
+      <img src={B.huggingface} alt="HuggingFace" height="30" loading="lazy" decoding="async" />
+    </a>
+  )}
+  {kaggle      && (
+    <a href={kaggle}      target="_blank" rel="noopener noreferrer" aria-label="Kaggle profile">
+      <img src={B.kaggle}      alt="Kaggle"      height="30" loading="lazy" decoding="async" />
+    </a>
+  )}
+  {medium      && (
+    <a href={medium}      target="_blank" rel="noopener noreferrer" aria-label="Medium profile">
+      <img src={B.medium}      alt="Medium"      height="30" loading="lazy" decoding="async" />
+    </a>
+  )}
+  {email       && (
+    <a href={email} aria-label="Send email">
+      <img src={B.email}       alt="Email"       height="30" loading="lazy" decoding="async" />
+    </a>
+  )}
+</div>
+
+<style>
+  .social-badges {
+    display:   flex;
+    flex-wrap: wrap;
+    gap:       0.55rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Each badge link: slight lift on hover */
+  .social-badges a {
+    display:    inline-block;
+    transition: opacity var(--t), transform var(--t);
+    line-height: 0;   /* removes the small gap below inline images */
+  }
+  .social-badges a:hover {
+    opacity:   0.85;
+    transform: translateY(-2px);
+  }
+
+  /* Reset default img display so badges don't have extra whitespace */
+  .social-badges img {
+    display:       block;
+    border-radius: 4px;
+  }
+</style>

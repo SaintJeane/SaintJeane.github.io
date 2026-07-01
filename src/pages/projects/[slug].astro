@@ -1,0 +1,276 @@
+---
+// src/pages/projects/[slug].astro
+// ─── Individual project detail page ─────────────────────────────────────────
+//
+// Astro pre-renders one HTML page per project at build time using
+// `getStaticPaths`. The resulting routes are:
+//
+//   /projects/agentic-rag/
+//   /projects/retail-optimizer/
+//   /projects/m4a-downloader/
+//   /projects/offline-voice-assistant/
+//
+// Page sections (top → bottom):
+//   1. Nav
+//   2. Back link
+//   3. Project header  (badges, title, tagline, tags, action links)
+//   4. Live Demo embed  (only if project.hfSpace is set)
+//   5. Project write-up (description + technical details placeholder)
+//   6. Footer
+
+import Layout      from '../../layouts/Layout.astro';
+import Nav         from '../../components/Nav.astro';
+import SpaceEmbed  from '../../components/SpaceEmbed.astro';
+import Footer      from '../../components/Footer.astro';
+
+import { projects } from '../../data/projects';
+import type { Project } from '../../data/projects';
+
+// ── getStaticPaths ──────────────────────────────────────────────────────────
+// Tells Astro which slugs to pre-render. Each object in the array becomes
+// one HTML page. `props` passes the matched project to the component below.
+export function getStaticPaths() {
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props:  { project },
+  }));
+}
+
+// ── Props ────────────────────────────────────────────────────────────────────
+// Astro infers the type from getStaticPaths; we declare it explicitly here
+// for TypeScript clarity.
+interface Props { project: Project; }
+const { project } = Astro.props;
+
+const {
+  title, tagline, description, longDescription,
+  tech, hfSpace, hfSpaceType, github, status, year,
+} = project;
+
+const isLive = status === 'live' && !!hfSpace;
+
+// Determine which embed method to use:
+//   gradio   → Gradio WebComponent (auto-sizing, no height prop needed)
+//   iframe   → everything else (Streamlit, Static, or Gradio via iframe)
+const embedType = hfSpaceType === 'gradio' ? 'gradio' : 'iframe';
+---
+
+<Layout title={`${title} — Your Name`} description={tagline}>
+  <Nav />
+
+  <main class="project-page">
+    <div class="container">
+
+      <!-- ── Back link ── -->
+      <a href="/#projects" class="back-link">← All Projects</a>
+
+      <!-- ── Project header ── -->
+      <header class="proj-header">
+
+        <!-- Badge row: status + year -->
+        <div class="proj-meta-row">
+          {isLive
+            ? <span class="badge-live">Live Demo</span>
+            : <span class="badge-github">GitHub</span>
+          }
+          <span class="proj-year">{year}</span>
+        </div>
+
+        <h1 class="proj-title">{title}</h1>
+        <p class="proj-tagline">{tagline}</p>
+
+        <!-- Tech tags -->
+        <div class="proj-tags">
+          {tech.map(t => <span class="tag">{t}</span>)}
+        </div>
+
+        <!-- External action links -->
+        <div class="proj-links">
+          {github && (
+            <a href={github} class="btn btn-ghost" target="_blank" rel="noopener noreferrer">
+              View on GitHub ↗
+            </a>
+          )}
+          {hfSpace && (
+            <a href={hfSpace} class="btn btn-ghost" target="_blank" rel="noopener noreferrer">
+              Open in HuggingFace ↗
+            </a>
+          )}
+        </div>
+      </header>
+
+      <!-- ── Live Demo embed ──────────────────────────────────────────────
+           Only rendered when the project has a HuggingFace Space URL.
+           The SpaceEmbed component handles both iframe and WebComponent.  -->
+      {hfSpace && (
+        <section class="proj-embed" aria-label="Live demo">
+          <p class="proj-embed-label">live demo</p>
+          <SpaceEmbed
+            spaceUrl={hfSpace}
+            type={embedType}
+            title={`${title} — live demo`}
+            height="780px"
+          />
+        </section>
+      )}
+
+      <!-- ── Project write-up ─────────────────────────────────────────────
+           longDescription is the extended version; falls back to description
+           if longDescription is not set in projects.ts.                   -->
+      <section class="proj-writeup" aria-label="Project details">
+
+        <h2>About this project</h2>
+        <p>{longDescription ?? description}</p>
+
+        <!--
+          🔧 Add more detail below as needed.
+             Good things to include:
+               - Key architecture decisions and why you made them
+               - Specific problems you solved (with the fix)
+               - Metrics / benchmarks if you have them
+               - What you'd do differently / future work
+        -->
+        <h3>Technical details</h3>
+        <p>
+          <!-- 🔧 Add per-project technical write-up here -->
+        </p>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!--
+    🔧 Replace with your real name, GitHub, and HuggingFace URLs.
+       These should match what you set in index.astro and Nav.astro.
+  -->
+  <Footer
+    name="Peter Jaimbo"
+    github="https://github.com/SaintJeane"
+    linkedin="https://linkedin.com/in/peterjaimbo"
+    huggingface="https://huggingface.co/Saint5"
+    kaggle="https://kaggle.com/mylesskews"
+    medium="https://medium.com/@mylesskews999"
+    email="mailto:jaimbopeter1@gmail.com"
+  />
+</Layout>
+
+<style>
+  /* ── Page wrapper — top padding clears the fixed nav (4rem height) ── */
+  .project-page {
+    padding-top:    5.5rem;
+    padding-bottom: 6rem;
+  }
+
+  /* ── Back link ── */
+  .back-link {
+    display:     inline-flex;
+    align-items: center;
+    gap:         0.35rem;
+    font-size:   0.875rem;
+    color:       var(--text-muted);
+    margin-bottom: 2.5rem;
+    transition:  color var(--t);
+  }
+  .back-link:hover { color: var(--accent); }
+
+  /* ── Project header ── */
+  .proj-header {
+    margin-bottom: 3.5rem;
+  }
+
+  /* Badge + year row */
+  .proj-meta-row {
+    display:     flex;
+    align-items: center;
+    gap:         1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  /* GitHub badge (non-live project) */
+  .badge-github {
+    display:       inline-flex;
+    align-items:   center;
+    font-size:     0.68rem;
+    font-family:   var(--font-mono);
+    font-weight:   500;
+    padding:       0.22em 0.7em;
+    border-radius: 999px;
+    background:    var(--surface-2);
+    color:         var(--text-muted);
+    border:        1px solid var(--border-2);
+    text-transform:  uppercase;
+    letter-spacing:  0.06em;
+  }
+
+  .proj-year {
+    font-family: var(--font-mono);
+    font-size:   0.8rem;
+    color:       var(--text-muted);
+  }
+
+  .proj-title {
+    font-size:      clamp(2rem, 5vw, 3.25rem);
+    margin-bottom:  0.75rem;
+  }
+
+  .proj-tagline {
+    font-size:   1.1rem;
+    color:       var(--text-2);
+    max-width:   none;
+    line-height: 1.65;
+    margin-bottom: 1.5rem;
+  }
+
+  .proj-tags {
+    display:       flex;
+    flex-wrap:     wrap;
+    gap:           0.45rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .proj-links {
+    display:   flex;
+    gap:       0.75rem;
+    flex-wrap: wrap;
+  }
+
+  /* ── Live demo section ── */
+  .proj-embed {
+    margin-bottom: 4rem;
+  }
+
+  /* Small monospace label above the embed */
+  .proj-embed-label {
+    font-family:    var(--font-mono);
+    font-size:      0.72rem;
+    color:          var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom:  0.75rem;
+    max-width:      none;
+  }
+
+  /* ── Write-up section ── */
+  .proj-writeup {
+    max-width: 720px;
+  }
+
+  .proj-writeup h2 {
+    font-size:     1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .proj-writeup h3 {
+    font-size:   1.1rem;
+    margin-top:  2.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .proj-writeup p {
+    color:       var(--text-2);
+    max-width:   none;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+</style>

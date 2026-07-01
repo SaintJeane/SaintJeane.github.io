@@ -1,0 +1,9 @@
+{
+  // When anyone clones this repo and opens it in VSCode, they'll see a popup
+  // in the bottom-right corner saying "Do you want to install the recommended
+  // extensions for this repository?" — this ensures the Astro extension is
+  // always installed, which provides .astro file syntax highlighting and IntelliSense.
+  "recommendations": [
+    "astro-build.astro-vscode"
+  ]
+}

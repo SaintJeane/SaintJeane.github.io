@@ -1,0 +1,201 @@
+---
+// src/components/Hero.astro
+// ─── Landing hero section ───────────────────────────────────────────────────
+//
+// Visual structure (top → bottom):
+//   1. Eyebrow: pulsing green dot + availability text
+//   2. Heading: name + role (role in accent colour)
+//   3. Terminal meta line: [ Python · LangGraph · PyTorch · live demos ↓ ]
+//   4. Bio paragraph
+//   5. CTA buttons
+//
+// Background: a subtle dot-grid fades toward the bottom via CSS mask.
+
+interface Props {
+  name:         string;   // Your full name
+  role:         string;   // Job title / tagline
+  bio:          string;   // 1–2 sentence description
+  github:       string;   // Full GitHub profile URL
+  huggingface:  string;   // Full HuggingFace profile URL
+  linkedin?:    string;   // Optional LinkedIn profile URL
+}
+
+const { name, role, bio, github, huggingface, linkedin = '' } = Astro.props;
+---
+
+<section class="hero" id="home">
+
+  <!-- Decorative dot-grid — purely visual, hidden from screen readers -->
+  <div class="hero-grid" aria-hidden="true"></div>
+
+  <div class="container hero-inner">
+
+    <!-- 1. Eyebrow: availability status -->
+    <div class="hero-eyebrow">
+      <span class="eyebrow-dot" aria-hidden="true"></span>
+      <!-- 🔧 Update this to reflect your current availability -->
+      <span>Open to opportunities</span>
+    </div>
+
+    <!-- 2. Main heading
+         The role line uses the accent colour as the primary visual hook.
+         The font-size is fluid: scales between mobile and wide viewport.  -->
+    <h1 class="hero-heading">
+      {name}
+      <span class="hero-role">{role}</span>
+    </h1>
+
+    <!--
+      3. Terminal-style meta line — the portfolio's signature element.
+         Reads like a config summary: skills + live proof.
+         "live demos ↓" uses the emerald live-colour as a subtle CTA.
+    -->
+    <div class="hero-meta" aria-label="Quick skills summary">
+      <span class="meta-brk" aria-hidden="true">[</span>
+      <span class="meta-item">Python</span>
+      <span class="meta-sep" aria-hidden="true">·</span>
+      <span class="meta-item">LangGraph</span>
+      <span class="meta-sep" aria-hidden="true">·</span>
+      <span class="meta-item">PyTorch</span>
+      <span class="meta-sep" aria-hidden="true">·</span>
+      <span class="meta-live">live demos ↓</span>
+      <span class="meta-brk" aria-hidden="true">]</span>
+    </div>
+
+    <!-- 4. Bio -->
+    <p class="hero-bio">{bio}</p>
+
+    <!-- 5. CTA buttons -->
+    <div class="hero-cta">
+      <a href="#projects" class="btn btn-primary">View Projects</a>
+      <a href={github}      class="btn btn-ghost" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      <a href={huggingface} class="btn btn-ghost" target="_blank" rel="noopener noreferrer">HuggingFace ↗</a>
+      {linkedin && (
+        <a href={linkedin} class="btn btn-ghost" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+      )}
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* ── Outer section ── */
+  .hero {
+    position: relative;
+    min-height: 100svh;       /* svh = small viewport height (handles mobile bars) */
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding-top: 4rem;        /* clear the fixed nav (nav height = 4rem) */
+  }
+
+  /* ── Dot-grid background decoration ──
+     A repeating radial-gradient creates a grid of tiny dots.
+     The mask fades it to transparent toward the bottom of the section,
+     so it doesn't compete with the projects section below.            */
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+    background-size: 30px 30px;
+    opacity: 0.45;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 85%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 85%);
+    pointer-events: none;
+  }
+
+  /* ── Inner content — positioned above the grid ── */
+  .hero-inner {
+    position: relative;
+    padding-block: 5rem;
+  }
+
+  /* ── 1. Eyebrow ── */
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    margin-bottom: 2rem;
+  }
+
+  /* Pulsing green dot — signals availability */
+  .eyebrow-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--live);
+    flex-shrink: 0;
+    animation: dot-pulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes dot-pulse {
+    0%, 100% { opacity: 1;   box-shadow: 0 0 0 0 var(--live-bg);           }
+    50%       { opacity: 0.6; box-shadow: 0 0 0 6px rgba(16,185,129,0.0);  }
+  }
+
+  /* ── 2. Heading ── */
+  .hero-heading {
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+  }
+
+  /* Role text on a new line, coloured accent — the main visual anchor */
+  .hero-role {
+    display: block;
+    color: var(--accent);
+  }
+
+  /* ── 3. Terminal meta line ── */
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: clamp(0.78rem, 1.6vw, 0.95rem);
+    margin-bottom: 1.75rem;
+  }
+
+  .meta-brk  { color: var(--accent); font-weight: 600; }
+  .meta-item { color: var(--text-2); }
+  .meta-sep  { color: var(--border-2); }
+
+  /* "live demos ↓" stands out in the live/emerald colour */
+  .meta-live { color: var(--live); }
+
+  /* ── 4. Bio ── */
+  .hero-bio {
+    font-size: 1.0625rem;
+    color: var(--text-2);
+    max-width: 52ch;
+    line-height: 1.75;
+    margin-bottom: 2.25rem;
+  }
+
+  /* ── 5. CTA buttons ── */
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  /* Stack buttons vertically on very small screens */
+  @media (max-width: 480px) {
+    .hero-cta {
+      flex-direction: column;
+    }
+    .hero-cta .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

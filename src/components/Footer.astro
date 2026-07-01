@@ -1,0 +1,71 @@
+---
+// src/components/Footer.astro
+// ─── Site footer — accepts all social link props ────────────────────────────
+// 🔧 Placeholder URLs are passed in from index.astro and [slug].astro
+
+interface Props {
+  name:          string;
+  github?:       string;
+  linkedin?:     string;
+  huggingface?:  string;
+  kaggle?:       string;
+  medium?:       string;
+  email?:        string;
+}
+
+const { name, github, linkedin, huggingface, kaggle, medium, email } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer-inner">
+
+    <p class="footer-copy">
+      © {year} {name} 
+      <!-- · Built with
+      <a href="https://astro.build" class="footer-link" target="_blank" rel="noopener noreferrer">Astro</a>
+      · Hosted on
+      <a href="https://pages.github.com" class="footer-link" target="_blank" rel="noopener noreferrer">GitHub Pages</a> -->
+    </p>
+
+    <nav class="footer-links" aria-label="Social links">
+      {github      && <a href={github}      class="footer-link" target="_blank" rel="noopener noreferrer">GitHub</a>}
+      {linkedin    && <a href={linkedin}    class="footer-link" target="_blank" rel="noopener noreferrer">LinkedIn</a>}
+      {huggingface && <a href={huggingface} class="footer-link" target="_blank" rel="noopener noreferrer">HuggingFace</a>}
+      {kaggle      && <a href={kaggle}      class="footer-link" target="_blank" rel="noopener noreferrer">Kaggle</a>}
+      {medium      && <a href={medium}      class="footer-link" target="_blank" rel="noopener noreferrer">Medium</a>}
+      {email       && <a href={email}       class="footer-link">Email</a>}
+    </nav>
+
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--border);
+    padding-block: 2rem;
+  }
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-copy {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    max-width: none;
+  }
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+  }
+  .footer-link {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    transition: color var(--t);
+  }
+  .footer-link:hover { color: var(--accent); }
+</style>

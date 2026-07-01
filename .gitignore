@@ -1,0 +1,36 @@
+# ─── Dependencies ────────────────────────────────────────────────────────────
+# npm installs these locally from package.json — they must never be committed.
+# node_modules/ can be 84MB+; GitHub has a 100MB file size limit anyway.
+node_modules/
+
+# ─── Astro build output ───────────────────────────────────────────────────────
+# `npm run build` writes your compiled site here.
+# GitHub Pages serves these files, but the Actions workflow generates them
+# fresh on every push — so we don't commit them to source control.
+dist/
+
+# ─── Astro internal cache ─────────────────────────────────────────────────────
+# Astro generates type definitions and caches in .astro/ during `npm run dev`
+# and `npm run build`. These are machine-local and auto-regenerated.
+.astro/
+
+# ─── Environment variables ────────────────────────────────────────────────────
+# .env files can hold API keys and secrets — NEVER commit them.
+# .env.example is the exception: it's a safe template with placeholder values
+# that developers can copy to create their own .env.
+.env
+.env.*
+!.env.example
+
+# ─── OS & editor noise ───────────────────────────────────────────────────────
+# macOS creates .DS_Store files in every directory it touches.
+.DS_Store
+
+# Windows thumbnail cache files.
+Thumbs.db
+
+# VSCode workspace settings are personal to each developer's machine.
+# The extensions recommendation file (.vscode/extensions.json) is the exception —
+# it's useful to commit so teammates get prompted to install the Astro extension.
+.vscode/*
+!.vscode/extensions.json
