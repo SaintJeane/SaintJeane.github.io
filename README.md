@@ -5,14 +5,14 @@
      The "Deploy" badge auto-reflects the live status of your GitHub Actions
      workflow — it turns green when a deploy succeeds and red if it fails.   -->
 
-[![Deploy to GitHub Pages](https://github.com/saint-jeane/saint-jeane.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/saint-jeane/saint-jeane.github.io/actions/workflows/deploy.yml)
+[![Deploy to GitHub Pages](https://github.com/SaintJeane/SaintJeane.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/SaintJeane/SaintJeane.github.io/actions/workflows/deploy.yml)
 [![Built with Astro](https://img.shields.io/badge/Built_with-Astro_7-BC52EE?style=flat&logo=astro&logoColor=white)](https://astro.build)
 [![Hosted on GitHub Pages](https://img.shields.io/badge/Hosted_on-GitHub_Pages-222222?style=flat&logo=github&logoColor=white)](https://pages.github.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=flat)](LICENSE)
 
 > Personal portfolio website showcasing ML & AI engineering projects with live, interactive demos embedded directly from HuggingFace Spaces.
 
-**Live site → [saint-jeane.github.io](https://saint-jeane.github.io)**
+**Live site -> [saintjeane.github.io](https://saintjeane.github.io)**
 
 ---
 
